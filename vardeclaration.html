@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Basic Web App</title>
+</head>
+<body>
+  <script>
+    // 1. alert
+    alert("Welcome to the basic web app!");
+
+    // 2. document.write (interpreted as "doc while")
+    document.write("<h2>Output from document.write:</h2>");
+
+    // 3. console.log
+    console.log("This message is logged to the console.");
+
+    // 4. var declaration
+    var message = "Hello from a var-declared variable!";
+    document.write("<p>" + message + "</p>");
+
+    // 5. while loop
+    var i = 0;
+    document.write("<p>While loop output:</p><ul>");
+    while (i < 3) {
+      document.write("<li>While loop iteration: " + i + "</li>");
+      i++;
+    }
+    document.write("</ul>");
+
+    // 6. for loop
+    document.write("<p>For loop output:</p><ul>");
+    for (var j = 0; j < 3; j++) {
+      document.write("<li>For loop iteration: " + j + "</li>");
+    }
+    document.write("</ul>");
+  </script>
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hangman Game</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f0f8ff;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      color: #2d3436;
+    }
+
+    #hangman {
+      white-space: pre;
+      font-family: monospace;
+      margin: 20px;
+      color: #d63031;
+      font-size: 1.5rem;
+    }
+
+    #word {
+      font-size: 2.5rem;
+      letter-spacing: 15px;
+      margin: 30px 0;
+    }
+
+    #letters {
+      display: flex;
+      flex-wrap: wrap;
+      max-width: 600px;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .letter-btn {
+      width: 40px;
+      height: 40px;
+      font-size: 1.2rem;
+      background: #0984e3;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .letter-btn:disabled {
+      background: #b2bec3;
+      cursor: not-allowed;
+    }
+
+    #wrong-letters {
+      margin-top: 20px;
+      color: #d63031;
+      font-weight: bold;
+      min-height: 24px;
+    }
+
+    #message {
+      margin-top: 30px;
+      font-size: 2rem;
+      font-weight: bold;
+      color: #00b894;
+    }
+
+    #play-again {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      border: none;
+      background: #00cec9;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Hangman Game</h1>
+  <div id="hangman"></div>
+  <div id="word"></div>
+  <div id="letters"></div>
+  <div id="wrong-letters"></div>
+  <div id="message"></div>
+  <button id="play-again">Play Again</button>
+
+  <script>
+    const words = [
+      "javascript",
+      "hangman",
+      "developer",
+      "coding",
+      "browser",
+      "function",
+      "variable",
+      "constant",
+      "object",
+      "array"
+    ];
+
+    let selectedWord = "";
+    let correctLetters = [];
+    let wrongLetters = [];
+    const maxWrong = 6;
+
+    const hangmanEl = document.getElementById("hangman");
+    const wordEl = document.getElementById("word");
+    const lettersEl = document.getElementById("letters");
+    const wrongLettersEl = document.getElementById("wrong-letters");
+    const messageEl = document.getElementById("message");
+    const playAgainBtn = document.getElementById("play-again");
+
+    function startGame() {
+      selectedWord = words[Math.floor(Math.random() * words.length)];
+      correctLetters = [];
+      wrongLetters = [];
+      messageEl.textContent = "";
+      wrongLettersEl.textContent = "";
+      hangmanEl.textContent = "";
+      playAgainBtn.style.display = "none";
+      displayWord();
+      createLetterButtons();
+    }
+
+    function displayWord() {
+      wordEl.textContent = selectedWord
+        .split("")
+        .map(letter => (correctLetters.includes(letter) ? letter : "_"))
+        .join(" ");
+    }
+
+    function createLetterButtons() {
+      lettersEl.innerHTML = "";
+      for (let i = 65; i <= 90; i++) {
+        const letter = String.fromCharCode(i).toLowerCase();
+        const btn = document.createElement("button");
+        btn.classList.add("letter-btn");
+        btn.textContent = letter;
+        btn.addEventListener("click", () => handleGuess(letter, btn));
+        lettersEl.appendChild(btn);
+      }
+    }
+
+    function handleGuess(letter, btn) {
+      btn.disabled = true;
+      if (selectedWord.includes(letter)) {
+        if (!correctLetters.includes(letter)) {
+          correctLetters.push(letter);
+          displayWord();
+          checkWin();
+        }
+      } else {
+        if (!wrongLetters.includes(letter)) {
+          wrongLetters.push(letter);
+          wrongLettersEl.textContent = "Wrong letters: " + wrongLetters.join(" ");
+          drawHangman(wrongLetters.length);
+          if (wrongLetters.length >= maxWrong) {
+            gameOver(false);
+          }
+        }
+      }
+    }
+
+    function checkWin() {
+      const wordComplete = selectedWord
+        .split("")
+        .every(letter => correctLetters.includes(letter));
+      if (wordComplete) {
+        gameOver(true);
+      }
+    }
+
+    function gameOver(win) {
+      if (win) {
+        messageEl.textContent = "🎉 You Win!";
+        messageEl.style.color = "#00b894";
+      } else {
+        messageEl.textContent = `😢 You Lose! Word was: ${selectedWord}`;
+        messageEl.style.color = "#d63031";
+      }
+      document.querySelectorAll(".letter-btn").forEach(btn => btn.disabled = true);
+      playAgainBtn.style.display = "inline-block";
+    }
+
+    function drawHangman(stage) {
+      const figureStages = [
+        "",
+        " O",
+        " O\n |",
+        " O\n/|",
+        " O\n/|\\",
+        " O\n/|\\\n/",
+        " O\n/|\\\n/ \\"
+      ];
+      hangmanEl.textContent = figureStages[stage];
+    }
+
+    playAgainBtn.addEventListener("click", startGame);
+
+    startGame();
+  </script>
+</body>
+</html>
