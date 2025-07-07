@@ -1,64 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Multiplication Tables</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      padding: 20px;
-      background: #f0f0f0;
+      margin: 30px;
     }
-    input, button {
-      padding: 10px;
-      margin: 5px;
-      font-size: 16px;
+    table {
+      border-collapse: collapse;
+      margin: 10px 0;
     }
-    .table {
-      margin-top: 20px;
-      background: #fff;
-      padding: 15px;
-      border-radius: 8px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    th, td {
+      border: 1px solid #333;
+      padding: 8px 12px;
+      text-align: center;
     }
-    .table h3 {
-      margin-bottom: 10px;
-    }
-    .line {
-      margin: 2px 0;
+    .table-container {
+      margin-bottom: 20px;
     }
   </style>
 </head>
 <body>
+  <h2>Generate Multiplication Tables</h2>
+  <label>Start Number:
+    <input type="number" id="startNum" value="2" />
+  </label>
+  <br />
+  <label>End Number:
+    <input type="number" id="endNum" value="5" />
+  </label>
+  <br /><br />
+  <button onclick="generateTables()">Generate Tables</button>
 
-  <h2>📊 Generate Multiplication Tables</h2>
-  <input type="number" id="start" placeholder="Start Number">
-  <input type="number" id="end" placeholder="End Number">
-  <button onclick="generateTables()">Generate</button>
-
-  <div id="output"></div>
+  <div id="tables"></div>
 
   <script>
     function generateTables() {
-      const start = parseInt(document.getElementById("start").value);
-      const end = parseInt(document.getElementById("end").value);
-      const output = document.getElementById("output");
-      output.innerHTML = '';
+      const start = parseInt(document.getElementById("startNum").value);
+      const end = parseInt(document.getElementById("endNum").value);
+      const tablesDiv = document.getElementById("tables");
+      tablesDiv.innerHTML = "";
 
-      if (isNaN(start) || isNaN(end) || start > end) {
-        output.innerHTML = "<p>Please enter valid numbers (start ≤ end).</p>";
-        return;
-      }
+      // create an array of numbers from start to end
+      const numbers = Array.from(
+        { length: end - start + 1 },
+        (_, i) => start + i
+      );
 
-      Array.from({ length: end - start + 1 }, (_, i) => start + i).map(num => {
-        const tableDiv = document.createElement("div");
-        tableDiv.className = "table";
-        tableDiv.innerHTML = `<h3>Table of ${num}</h3>` +
-          Array.from({ length: 10 }, (_, j) => `<div class="line">${num} × ${j + 1} = ${num * (j + 1)}</div>`).join('');
-        output.appendChild(tableDiv);
+      numbers.forEach(num => {
+        const tableContainer = document.createElement("div");
+        tableContainer.className = "table-container";
+
+        const heading = document.createElement("h3");
+        heading.textContent = `Table of ${num}`;
+        tableContainer.appendChild(heading);
+
+        const table = document.createElement("table");
+        const tbody = document.createElement("tbody");
+
+        // Create an array [1,2,...,10] without a loop
+        const multipliers = Array.from({ length: 10 }, (_, i) => i + 1);
+
+        multipliers.map(multiplier => {
+          const tr = document.createElement("tr");
+          const td1 = document.createElement("td");
+          const td2 = document.createElement("td");
+          const td3 = document.createElement("td");
+
+          td1.textContent = num;
+          td2.textContent = "×";
+          td3.textContent = multiplier + " = " + (num * multiplier);
+
+          tr.appendChild(td1);
+          tr.appendChild(td2);
+          tr.appendChild(td3);
+          tbody.appendChild(tr);
+        });
+
+        table.appendChild(tbody);
+        tableContainer.appendChild(table);
+        tablesDiv.appendChild(tableContainer);
       });
     }
   </script>
-
 </body>
 </html>
